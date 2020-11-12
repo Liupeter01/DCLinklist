@@ -331,6 +331,8 @@ void DCListClear(DCList* SL)	//循环链表的清空不需要删除头结点
 					p = p->next;
 					free(ptemp);
 		  }
+		  SL->last = SL->first;
+		  SL->last->next = SL->first->prior = SL->first;
 		  SL->amount = 0;
 }
 
