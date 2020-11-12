@@ -129,27 +129,174 @@ void DCListInsertBackByPos(DCList* SL, int pos, ElemType e)		  //Ñ­»·Ë«Á´±í°´ÕÕÎ
 
 void DCListPopFront(DCList* SL)			//Ñ­»·Ë«Á´±íµÄÍ·²¿É¾³ý
 {
-
+		  if (SL->amount == 0)					  //²»´æÔÚ½Úµã
+		  {
+					printf("Á´±íµÄ³¤¶ÈÎª¿Õ£¬ÎÞ·¨½øÐÐÉ¾³ý²Ù×÷\n");
+					return;
+		  }
+		  else
+		  {
+					LinkNode* p = SL->first->next;	//±£´æÊ×Ôª½Úµã
+					if (p->next == NULL)					//Ê×Ôª½Úµã¼´Îª×îºóÒ»¸ö½áµã
+					{
+							  free(p);
+							  SL->last = SL->first;			//Î²½áµãÖ¸ÏòÍ·½áµã
+							  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+							  SL->last->next = SL->first; //Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+					}
+					else
+					{
+							  SL->first->next = p->next;	//Ìø¹ýµ±Ç°Ê×Ôª½Úµã
+							  p->next->prior = SL->first;			  //Ê×Ôª½Úµãºó¼ÌµÄÇ°¼üÖ¸ÏòÍ·½áµã
+							  free(p);
+					}
+					SL->amount--;
+		  }
 }
 
 void DCListPopBack(DCList* SL)		//Ñ­»·Ë«Á´±íµÄÎ²²¿É¾³ý
 {
-
+		  if (SL->amount == 0)					  //²»´æÔÚ½Úµã
+		  {
+					printf("Á´±íµÄ³¤¶ÈÎª¿Õ£¬ÎÞ·¨½øÐÐÉ¾³ý²Ù×÷\n");
+					return;
+		  }
+		  else
+		  {
+					LinkNode* pre = SL->last->prior;		//±£´æ×îºó½áµãµÄÇ°Çý
+					if (SL->first->next == SL->last)					//Ö»Ê£ÏÂÒ»¸öÍ·½áµãÁË
+					{
+							  free(SL->last);
+							  SL->last = SL->first;			//Î²½áµãÖ¸ÏòÍ·½áµã
+							  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+							  SL->last->next = SL->first; //Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+					}
+					else
+					{
+							  free(SL->last);
+							  SL->last = pre;
+							  SL->last->next = SL->first; //Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+							  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+					}
+					SL->amount--;
+		  }
 }
 
 BOOL DCListDeleteByPos(DCList* SL, int pos, ElemType* e)			//Ñ­»·Ë«Á´±íµÄÍ¨¹ýÎ»ÐòÉ¾³ý
 {
-
+		  if (SL == NULL || SL->amount == 0)
+		  {
+					printf("Á´±íµÄ³¤¶ÈÎª¿Õ£¬ÎÞ·¨½øÐÐÉ¾³ý²Ù×÷\n");
+					return FALSE;
+		  }
+		  if (pos <0 || pos>SL->amount)
+		  {
+					printf("ÊäÈëµÄÐèÒªÉ¾³ýµÄÎ»ÖÃ·Ç·¨£¬ÎÞ·¨½øÐÐÉ¾³ý²Ù×÷\n");
+					return FALSE;
+		  }
+		  LinkNode* pcurr = SL->first->next;	  //µ±Ç°½áµã
+		  int counter = 1;
+		  while (pcurr != SL->first && counter++ != pos)
+		  {
+					pcurr = pcurr->next;
+		  }
+		  if (pcurr != NULL)
+		  {
+					LinkNode* pnext = pcurr->next;		  //ºó¼Ì½Úµã
+					LinkNode* pre = pcurr->prior;		  //Ç°Çý½Úµã
+					*e = pcurr->data;
+					if (pnext == NULL)			  //¸ÃÉ¾³ýµÄ½áµãÎª×îºóÒ»¸ö½áµã
+					{
+							  SL->last = pre;
+							  SL->last->next = SL->first; //Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+							  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+					}
+					else
+					{
+							  pre->next = pnext;
+							  pnext->prior = pre;
+					}
+					free(pcurr);
+					SL->amount--;
+					return TRUE;
+		  }
+		  else
+		  {
+					return FALSE;
+		  }
 }
 
 BOOL DCListDeleteByNum(DCList* SL, ElemType key, ElemType* e)		//Ñ­»·Ë«Á´±íµÄÍ¨¹ýÊýÖµÉ¾³ý
 {
+		  if (SL == NULL || SL->amount == 0)
+		  {
+					printf("Á´±íµÄ³¤¶ÈÎª¿Õ£¬ÎÞ·¨½øÐÐÉ¾³ý²Ù×÷\n");
+					return FALSE;
+		  }
+		  LinkNode* pcurr = LocateElemByNum(SL, key);
+		  if (pcurr != NULL)
+		  {
+					*e = pcurr->data;
+					LinkNode* pnext = pcurr->next;		  //ºó¼Ì½Úµã
+					LinkNode* pre = pcurr->prior;		  //Ç°Çý½Úµã
+					if (pnext == NULL)			  //¸ÃÉ¾³ýµÄ½áµãÎª×îºóÒ»¸ö½áµã
+					{
+							  SL->last = pre;
+							  SL->last->next = SL->first; //Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+							  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+					}
+					else
+					{
+							  pre->next = pnext;
+							  pnext->prior = pre;
+					}
+					free(pcurr);
+					SL->amount--;
+					return TRUE;
+		  }
+		  else
+		  {
+					return FALSE;
+		  }
+}
 
+void Swap(ElemType* a1, ElemType* a2)
+{
+		  ElemType temp = *a1;
+		  *a1 = *a2;
+		  *a2 = temp;
 }
 
 void  DCListSort(DCList* list, LinkNode* left, LinkNode* right)		//Ñ­»·ÅÅÐò
 {
-
+		  if (list == NULL)
+		  {
+					printf("Ñ­»·Á´±íÎª¿Õ±í£¬Ã»ÓÐÔªËØ£¬ÎÞ·¨½øÐÐÉ¾³ý\n");
+					return;
+		  }
+		  if (list->amount == 0 || list->amount == 1)
+		  {
+					return;
+		  }
+		  if (left != list->first && right != NULL)					  //¿ªÊ¼µÄleft½áµã²»ÔÊÐíÊÇÍ·½áµã
+		  {
+					LinkNode* pre = NULL;					//¼ÇÂ¼Ç°Çý½áµã
+					LinkNode* islow = left;		  //ÂýËÙÖ¸Õë
+					LinkNode* jfast = islow->next;				//¿ìËÙÖ¸Õë
+					while (jfast != list->first)			//ÓÉÓÚÊÇÑ­»·Á´±íÒò´ËÑ­»·µÄÔÝÍ£Ìõ¼þÎªÍ·½áµã
+					{
+							  if (islow->data > jfast->data)
+							  {
+										pre = islow;
+										islow = islow->next;
+										Swap(&(islow->data), &(jfast->data));
+							  }
+							  jfast = jfast->next;
+					}
+					Swap(&(left->data), &(islow->data));
+					DCListSort(list, left, pre);
+					DCListSort(list, islow->next, right);
+		  }
 }
 
 void DCListDistroy(DCList* SL)					  //Ñ­»·Á´±íµÄ´Ý»Ù
@@ -164,5 +311,28 @@ void DCListClear(DCList* SL)	//Ñ­»·Á´±íµÄÇå¿Õ
 
 void DCListReverse(DCList* SL)	//Ñ­»·Á´±íµÄ·´×ª
 {
-
+		  if (SL == NULL)
+		  {
+					printf("Ë«Á´±íÃ»ÓÐ±»´´½¨£¬²Ù×÷Ê§°Ü\n");
+					return;
+		  }
+		  if (SL->amount == 0 || SL->amount == 1)
+		  {
+					return;
+		  }
+		  LinkNode* p = SL->first->next;		  //Ê×Ôª½Úµã
+		  SL->last = p;					//´ËÊ±µÄÊ×Ôª½ÚµãÎªÎ²½áµã
+		  LinkNode* pnext = p->next;
+		  while (pnext != SL->first)			  //pnext²»µ½´ïÑ­»·Á´±íµÄÍ·½áµã
+		  {
+					LinkNode* pcur = p;
+					LinkNode* next = pnext;
+					p = pnext;
+					pnext = pnext->next;
+					pcur->prior = next;			  //¸Ä±ä½ÚµãË³Ðò
+					next->next = pcur;			  //¸Ä±ä½áµãË³Ðò
+		  }
+		  SL->first->next = p;
+		  SL->last->next = SL->first;//Î²²¿½ÚµãnextÁ´½ÓÍ·²¿½áµãÐÎ³ÉÑ­»·½á¹¹
+		  SL->first->prior = SL->last;//Í·²¿½ÚµãpriorÁ´½ÓÎ²²¿½áµãÐÎ³ÉÑ­»·½á¹¹
 }
