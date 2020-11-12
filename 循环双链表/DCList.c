@@ -27,7 +27,7 @@ LinkNode* LocateElemByNum(DCList* SL, ElemType key)//查找元素
 		  {
 					p = p->next;
 		  }
-		  return p;
+		  return ((p == SL->first) ? NULL : p); //到达了头结点没有找到
 }
 
 void InitDCList(DCList* SL)			//循环初始化
