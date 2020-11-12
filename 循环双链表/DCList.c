@@ -301,12 +301,37 @@ void  DCListSort(DCList* list, LinkNode* left, LinkNode* right)		//循环排序
 
 void DCListDistroy(DCList* SL)					  //循环链表的摧毁
 {
-
+		  if (SL == NULL)
+		  {
+					printf("双链表没有被创建，操作失败\n");
+					return;
+		  }
+		  LinkNode* p = SL->first->next;
+		  while (p != SL->first)
+		  {
+					LinkNode* ptemp = p;
+					p = p->next;
+					free(ptemp);
+		  }
+		  free(SL->first);				//删除头结点
+		  SL->amount = 0;
 }
 
-void DCListClear(DCList* SL)	//循环链表的清空
+void DCListClear(DCList* SL)	//循环链表的清空不需要删除头结点
 {
-
+		  if (SL == NULL)
+		  {
+					printf("双链表没有被创建，操作失败\n");
+					return;
+		  }
+		  LinkNode* p = SL->first->next;
+		  while (p != SL->first)
+		  {
+					LinkNode* ptemp = p;
+					p = p->next;
+					free(ptemp);
+		  }
+		  SL->amount = 0;
 }
 
 void DCListReverse(DCList* SL)	//循环链表的反转
